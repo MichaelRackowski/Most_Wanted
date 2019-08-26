@@ -19,10 +19,10 @@ function app(people){
     app(people); // restart app
       break;
   }
-  
   // Call the mainMenu function ONLY after you find the SINGLE person you are looking for
-  mainMenu(searchResults, people);
+  mainMenu(searchResults[0], people);
 }
+
 function searchByCriteria(people){
 
   let userInput = prompt("what would you like to search?[gender][eyecolor][dob][weight][height][occupation]")
@@ -40,10 +40,11 @@ function searchByCriteria(people){
     let weight =  searchByWeight(people);
     break;
     case "height":
-    let height= searchByHeight(people);
+    let height = searchByHeight(people);
     break;
     case "occupation":
-    let occupation=  searchByOccupation(people);
+    let occupation =  searchByOccupation(people);
+    break;
     default:
     window.alert("Please enter a corresponding Criterion.");
     searchByCriteria(people);
@@ -52,6 +53,7 @@ function searchByCriteria(people){
   }
   return app(people);
 }
+
 function searchByGender(people){
   let gender = promptFor("male or female?",chars);
    let foundPerson = people.filter(function(person){
@@ -65,10 +67,11 @@ function searchByGender(people){
    displayPeople(foundPerson)
     return foundPerson;
 }
-function searchByEyecolor(people){
+
+function searchByEyeColor(people){
   let eyecolor = promptFor("What is their eyecolor?",chars);
   let foundPerson = people.filter(function(person){
-    if(person.eyecolor == eyecolor){
+    if(person.eyeColor == eyecolor){
       return true;
     }
     else{
@@ -78,6 +81,7 @@ function searchByEyecolor(people){
     displayPeople(foundPerson)
    return foundPerson;
 }
+
 function searchByDob(people){
   let dob = promptFor("What is their Date of Birth?",chars);
   let foundPerson = people.filter(function(person){
@@ -91,6 +95,7 @@ function searchByDob(people){
     displayPeople(foundPerson)
    return foundPerson;
 }
+
 function searchByWeight(people){
   let weight = promptFor("what is their weight?",chars);
     let foundPerson = people.filter(function(person){
@@ -104,6 +109,7 @@ function searchByWeight(people){
       displayPeople(foundPerson)
         return foundPerson;
 }
+
 function searchByHeight(people){
   let height = promptFor("what is their height",chars);
     let foundPerson = people.filter(function(person){
@@ -117,8 +123,8 @@ function searchByHeight(people){
 }
 
 function searchByOccupation(people){
-  let occupation = ("what is their occupation",chars);
-    let foundPerson = person.filter(function(person){
+  let occupation = promptFor("what is their occupation",chars);
+    let foundPerson = people.filter(function(person){
       if(person.occupation == occupation){
         return true;
       }
@@ -149,7 +155,7 @@ function mainMenu(person, people){
     let family = searchForFamily(person,people);
     break;
     case "descendants":
-    let descendants = ?
+    let descendants = 0
     break;
     case "restart":
     app(people); // restart
@@ -199,16 +205,27 @@ function displayPerson(person){
   alert(personInfo);
 }
 
-function searchForFamily(foundPerson, people){
+function searchForFamily(foundPerson, people){ 
   let foundFamily = people.filter(function(person){
-    if(foundPerson.id === person.parents[0] || foundPerson.id === person.parents[1] || foundPerson.parents[0] === person.parents[0] || foundperson.parents[1] === person.parents[1] || foundPerson.parents[0] === person.parents[1] || foundPerson.parents[1] === person.parents[0]){
+    if(person.currentSpouse === foundPerson.id){
       return true;
+    }
+    else if(foundPerson.parents.length === 1){
+      if(foundPerson.parents[0] === person.id || foundPerson.parents[0] === person.parents[0] || foundPerson.parents[0] === person.parents[1]){
+        return true;
+      }
+    }
+    else if(foundPerson.parents.length === 2){
+      if(foundPerson.parents[0] === person.id || foundPerson.parents[1] === person.id || foundPerson.parents[0] === person.parents[0] || foundPerson.parents[0] === person.parents[1] || foundPerson.parents[1] === person.parents[0] || foundPerson.parents[1] === person.parents[1]){
+        return true;
+      }
     }
     else{
       return false;
     }
   })
-return foundFamily;
+ //alert(foundFamily);
+ displayPeople(foundFamily);
 }
 
 // function that prompts and validates user input
