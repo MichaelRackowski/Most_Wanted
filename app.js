@@ -111,7 +111,7 @@ function searchByWeight(people){
 }
 
 function searchByHeight(people){
-  let height = promptFor("what is their height",chars);
+  let height = promptFor("what is their height?",chars);
     let foundPerson = people.filter(function(person){
       if(person.height == height){
         return true;
@@ -123,7 +123,7 @@ function searchByHeight(people){
 }
 
 function searchByOccupation(people){
-  let occupation = promptFor("what is their occupation",chars);
+  let occupation = promptFor("what is their occupation?",chars);
     let foundPerson = people.filter(function(person){
       if(person.occupation == occupation){
         return true;
@@ -149,13 +149,16 @@ function mainMenu(person, people){
 
   switch(displayOption){
     case "info":
-    let info = displayPerson(person);
+    displayPerson(person);
      break;
     case "family":
     let family = searchForFamily(person,people);
+    displayFamily(family);
     break;
     case "descendants":
-    let descendants = 0
+    let descendants =[];
+    searchForChildren(people,person,descendants);
+    displayPeople(descendants);
     break;
     case "restart":
     app(people); // restart
@@ -165,6 +168,7 @@ function mainMenu(person, people){
     default:
     return mainMenu(person, people); // ask again
   }
+  return app(people);
 }
 
 function searchByName(people){
@@ -189,6 +193,11 @@ function displayPeople(people){
     return person.firstName + " " + person.lastName;
   }).join("\n"));
 }
+function displayFamily(people){
+  alert(people.map(function(person){
+    return person.firstName + " " + person.lastName + " : " + person.relationship;
+  }).join("\n"));
+}
 
 function displayPerson(person){
   // print all of the information about a person:
@@ -196,7 +205,7 @@ function displayPerson(person){
   let personInfo = "First Name: " + person.firstName + "\n";
   personInfo += "Last Name: " + person.lastName + "\n";
   personInfo += "gender: "  + person.gender + "\n";
-  personInfo += "eyecolor: " + person.eyecolor + "\n";
+  personInfo += "eyeColor: " + person.eyeColor + "\n";
   personInfo += "dob: " + person.dob + "\n";
   personInfo += "weight: " + person.weight + "\n";
   personInfo += "height: " + person.height + "\n";
@@ -208,24 +217,52 @@ function displayPerson(person){
 function searchForFamily(foundPerson, people){ 
   let foundFamily = people.filter(function(person){
     if(person.currentSpouse === foundPerson.id){
+      person.relationship ="Spouse";
       return true;
     }
-    else if(foundPerson.parents.length === 1){
+    else if(person.id === foundPerson.parents[0]|| person.id === foundPerson.parents[1]){
+      person.relationship = "Parent";
+      return true;
+    }
+    else if(person.parents.length === 1){
       if(foundPerson.parents[0] === person.id || foundPerson.parents[0] === person.parents[0] || foundPerson.parents[0] === person.parents[1]){
+       person.relationship ="Child";
         return true;
       }
     }
-    else if(foundPerson.parents.length === 2){
+    else if(person.parents.length === 2){
       if(foundPerson.parents[0] === person.id || foundPerson.parents[1] === person.id || foundPerson.parents[0] === person.parents[0] || foundPerson.parents[0] === person.parents[1] || foundPerson.parents[1] === person.parents[0] || foundPerson.parents[1] === person.parents[1]){
+        person.relationship = "Child";
         return true;
       }
     }
     else{
       return false;
     }
-  })
- //alert(foundFamily);
- displayPeople(foundFamily);
+    
+});
+return foundFamily;
+}
+  function searchForChildren(people, foundPerson, descendants) {
+  let foundChildren = people.filter(function(person){
+    if(foundPerson.id === person.parents[0]|| foundPerson.id === person.parents[1]) {
+      return true; 
+    }   
+    else{
+      return false;
+    }
+  });  
+  if(foundChildren.length === 0) {
+    return;
+  }
+  else {
+    for(let i = 0; i < foundChildren.length; i++){
+      descendants.push(foundChildren[i]);
+      searchForChildren(people, foundChildren[i], descendants);
+    }
+  }
+  return descendants;
+//alert(foundFamily);
 }
 
 // function that prompts and validates user input
